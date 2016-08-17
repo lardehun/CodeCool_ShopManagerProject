@@ -29,40 +29,20 @@ public class Tej {
 		return urtartalom;
 	}
 
-	public void setUrtartalom(int urtartalom) {
-		this.urtartalom = urtartalom;
-	}
-
 	public String getGyarto() {
 		return gyarto;
-	}
-
-	public void setGyarto(String gyarto) {
-		this.gyarto = gyarto;
 	}
 
 	public Date getSzavatossag() {
 		return szavatossag;
 	}
 
-	public void setSzavatossag(Date szavatossag) {
-		this.szavatossag = szavatossag;
-	}
-
 	public double getZsirtartalom() {
 		return zsirtartalom;
 	}
 
-	public void setZsirtartalom(double zsirtartalom) {
-		this.zsirtartalom = zsirtartalom;
-	}
-
 	public long getAr() {
 		return ar;
-	}
-
-	public void setAr(long ar) {
-		this.ar = ar;
 	}
 	
 	@Override
