@@ -1,13 +1,15 @@
 package bolt;
 
+import java.util.Hashtable;
+
 public class Bolt {
 	String nev;
 	String cim;
 	String tulajdonos;
-	Tej[] tejpult;
+	Hashtable tejpult;
 	int flag;
 	
-	public Bolt(String nev, String cim, String tulajdonos, Tej[] tejpult) {
+	public Bolt(String nev, String cim, String tulajdonos, Hashtable tejpult) {
 		this.nev = nev;
 		this.cim = cim;
 		this.tulajdonos = tulajdonos;
@@ -33,13 +35,13 @@ public class Bolt {
 	}
 	
 	public boolean vanMegTej() {
-		if (tejpult.length > 0) {
-			return true;			
+		if (tejpult.isEmpty()) {
+			return false;			
 		}
-		return false;
+		return true;
 	}
 	
-	public Tej vasarolTej(Tej tej) {
+	public Tej vasarolTej(long vonalKod) {
 		return null;
 	}
 	
