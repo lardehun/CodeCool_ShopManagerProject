@@ -1,23 +1,24 @@
-package bolt;
+package bolt.aruk;
 
 import java.util.Date;
 
-public class Tej {
+import bolt.Elelmiszer;
+
+public abstract class Tej extends Elelmiszer{
 	long vonalKod;
-	final int LITER;
-	final int FELLITER;
-	final int POHAR;
-	final double ZSIROS;
-	final double FELZSIROS;
+	final int LITER = 0;
+	final int FELLITER = 0;
+	final int POHAR = 0;
+	final double ZSIROS = 0.0;
+	final double FELZSIROS = 0.0;
 	int urtartalom;
 	String gyarto;
 	Date szavatossag;	
 	double zsirtartalom;
-	long ar;
 	
-	public Tej(long vonalKod,int urtartalom,String gyarto,Date szavatossag,double zsirtartalom,long ar) {
+	public Tej(long vonalKod,int urtartalom,String gyarto,Date szavatossag,double zsirtartalom) {
+		super(vonalKod, gyarto, szavatossag);
 		this.vonalKod = vonalKod;
-		this.ar = ar;
 		this.gyarto = gyarto;
 		this.szavatossag = szavatossag;
 		this.zsirtartalom = zsirtartalom;
@@ -48,10 +49,6 @@ public class Tej {
 		return zsirtartalom;
 	}
 
-	public long getAr() {
-		return ar;
-	}
-	
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -63,8 +60,6 @@ public class Tej {
 		builder.append(szavatossag);
 		builder.append(" Zsirtartalom:");
 		builder.append(zsirtartalom);
-		builder.append(" Ár:");
-		builder.append(ar);
 		return builder.toString();
 	}
 }
