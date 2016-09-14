@@ -3,9 +3,9 @@ package bolt;
 import java.util.Date;
 
 public abstract class Elelmiszer {
-	long vonalKod;
-	String gyarto;
-	Date szavatossagiIdo;
+	private long vonalKod;
+	private String gyarto;
+	private Date szavatossagiIdo;
 	
 	public Elelmiszer(long vonalKod, String gyarto, Date szavatossagiIdo) {
 		this.vonalKod = vonalKod;

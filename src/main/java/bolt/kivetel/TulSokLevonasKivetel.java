@@ -1,11 +1,11 @@
 package bolt.kivetel;
 
-import bolt.BoltKivetel;
-
 public class TulSokLevonasKivetel extends BoltKivetel{
 
-	public TulSokLevonasKivetel() {
-		// TODO Auto-generated constructor stub
+	private static final long serialVersionUID = 1L;
+
+	public TulSokLevonasKivetel(String uzenet) {
+		super(uzenet);	
 	}
 
 }

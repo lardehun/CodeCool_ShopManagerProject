@@ -1,11 +1,11 @@
 package bolt.kivetel;
 
-import bolt.BoltKivetel;
-
 public class NemLetezoAruKivetel extends BoltKivetel{
 
-	public NemLetezoAruKivetel() {
-		// TODO Auto-generated constructor stub
+	private static final long serialVersionUID = 1L;
+
+	public NemLetezoAruKivetel(String uzenet) {
+		super(uzenet);
 	}
 
 }
