@@ -1,1 +1,0 @@
-# CodeCool_ShopManagerProject

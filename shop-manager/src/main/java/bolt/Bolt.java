@@ -2,7 +2,7 @@ package bolt;
 
 import java.util.Hashtable;
 
-import bolt.aruk.Tej;
+import bolt.aruk.tej.Tej;
 import bolt.kivetel.NemLetezoAruKivetel;
 import bolt.kivetel.TulSokLevonasKivetel;
 
@@ -63,6 +63,10 @@ public class Bolt {
 		
 	}
 	
+	public Hashtable<Long, BoltBejegyzes> getElelmiszerPult() {
+		return elelmiszerPult;
+	}
+
 	public void feltoltUjElelmiszerrel(Elelmiszer e, long mennyiseg,long ar) {
 		BoltBejegyzes jegyzes = new BoltBejegyzes(e, mennyiseg, ar);
 		elelmiszerPult.put(e.getVonalKod(), jegyzes);
