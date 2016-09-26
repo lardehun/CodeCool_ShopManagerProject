@@ -1,6 +1,7 @@
 package bolt;
 
 import java.util.Hashtable;
+import java.util.Iterator;
 
 import bolt.aruk.tej.Tej;
 import bolt.kivetel.NemLetezoAruKivetel;
@@ -10,7 +11,7 @@ public class Bolt {
 	private String nev;
 	private String cim;
 	private String tulajdonos;
-	private Hashtable<Long, BoltBejegyzes> elelmiszerPult;
+	private Hashtable<Long, BoltBejegyzes> elelmiszerPult = new Hashtable<Long, Bolt.BoltBejegyzes>();
 	
 	public Bolt(String nev, String cim, String tulajdonos, Hashtable<Long, BoltBejegyzes> elelmiszerPult) {
 		this.nev = nev;
@@ -37,6 +38,12 @@ public class Bolt {
 		return tulajdonos;
 	}
 	
+	
+	
+	public void setElelmiszerPult(Hashtable<Long, BoltBejegyzes> elelmiszerPult) {
+		this.elelmiszerPult = elelmiszerPult;
+	}
+
 	public boolean vanMegadottAru(Class<?> o) {
 		for (BoltBejegyzes aru : elelmiszerPult.values()) {
 			if (o.isAssignableFrom(aru.getE().getClass())) {
@@ -142,5 +149,29 @@ public class Bolt {
 		public void setAr(long ar) {
 			this.ar = ar;
 		}
+	}
+	
+	public class AruIterator implements Iterator<Aru>{
+		Iterator<Aru> i;
+		
+		public AruIterator(Iterator<Aru> i) {
+			this.i = i;
+		}
+
+		public boolean hasNext() {
+			if (i.hasNext()) {
+				return true;
+			}
+			return false;
+		}
+
+		public Aru next() {
+			return i.next();
+		}
+		
+		public void remove() {
+			i.remove();
+		}
+		
 	}
 }
