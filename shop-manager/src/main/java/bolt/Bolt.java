@@ -1,23 +1,28 @@
 package bolt;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 
 import bolt.aruk.tej.Tej;
+import bolt.kivetel.BoltKivetel;
 import bolt.kivetel.NemLetezoAruKivetel;
 import bolt.kivetel.TulSokLevonasKivetel;
+import bolt.kivetel.ZarvaKivetel;
 
-public class Bolt {
+public class Bolt implements Shop{
 	private String nev;
 	private String cim;
 	private String tulajdonos;
-	private Hashtable<Long, BoltBejegyzes> elelmiszerPult = new Hashtable<Long, Bolt.BoltBejegyzes>();
+	private Hashtable<Long, BoltBejegyzes> aruk = new Hashtable<Long, Bolt.BoltBejegyzes>();
+	private boolean nyitva =true;
 	
 	public Bolt(String nev, String cim, String tulajdonos, Hashtable<Long, BoltBejegyzes> elelmiszerPult) {
 		this.nev = nev;
 		this.cim = cim;
 		this.tulajdonos = tulajdonos;
-		this.elelmiszerPult = elelmiszerPult;
+		this.aruk = elelmiszerPult;
 	}
 	
 	public Bolt(String nev, String cim, String tulajdonos) {
@@ -41,67 +46,90 @@ public class Bolt {
 	
 	
 	public void setElelmiszerPult(Hashtable<Long, BoltBejegyzes> elelmiszerPult) {
-		this.elelmiszerPult = elelmiszerPult;
+		this.aruk = elelmiszerPult;
 	}
 
-	public boolean vanMegadottAru(Class<?> o) {
-		for (BoltBejegyzes aru : elelmiszerPult.values()) {
-			if (o.isAssignableFrom(aru.getE().getClass())) {
-				if (aru.getMennyiseg() > 0) {
-					return true;
+	public boolean vanMegadottAru(Class<?> o) throws ZarvaKivetel {
+		if (nyitva) {
+			for (BoltBejegyzes aru : aruk.values()) {
+				if (o.isAssignableFrom(aru.getE().getClass())) {
+					if (aru.getMennyiseg() > 0) {
+						return true;
+					}
 				}
 			}
+			return false;
 		}
-		return false;
+		throw new ZarvaKivetel("A bolt zárva.");
 	}
 	
-	public boolean vanMegTej() {
-		return vanMegadottAru(Tej.class);
+	public boolean vanMegTej() throws ZarvaKivetel {
+		if (nyitva) {
+			return vanMegadottAru(Tej.class);
+		}
+		throw new ZarvaKivetel("A bolt zárva.");
 	}
 	
-	public void feltoltElelmiszerrel(long vonalKod,long mennyiseg) throws NemLetezoAruKivetel{
-		if (elelmiszerPult.containsKey(vonalKod)) {
-			BoltBejegyzes jegyzes = elelmiszerPult.get(vonalKod);
-			jegyzes.adMennyiseg(mennyiseg);
+	public void feltoltElelmiszerrel(long vonalKod,long mennyiseg) throws NemLetezoAruKivetel, ZarvaKivetel{
+		if (nyitva) {
+			if (aruk.containsKey(vonalKod)) {
+				BoltBejegyzes jegyzes = aruk.get(vonalKod);
+				jegyzes.adMennyiseg(mennyiseg);
+			}
+			else {
+				throw new NemLetezoAruKivetel("Nincs áru ezzel a vonalkóddal: " + vonalKod);
+			}
 		}
 		else {
-			throw new NemLetezoAruKivetel("Nincs áru ezzel a vonalkóddal: " + vonalKod);
+			throw new ZarvaKivetel("A bolt zárva.");
 		}
-		
 	}
 	
 	public Hashtable<Long, BoltBejegyzes> getElelmiszerPult() {
-		return elelmiszerPult;
+		return aruk;
 	}
 
-	public void feltoltUjElelmiszerrel(Elelmiszer e, long mennyiseg,long ar) {
-		BoltBejegyzes jegyzes = new BoltBejegyzes(e, mennyiseg, ar);
-		elelmiszerPult.put(e.getVonalKod(), jegyzes);
-		
-	}
-	
-	public void torolElelmiszer(long vonalKod) throws NemLetezoAruKivetel{
-		if (elelmiszerPult.containsKey(vonalKod)) {
-			elelmiszerPult.remove(vonalKod);
+	public void feltoltUjElelmiszerrel(Elelmiszer e, long mennyiseg,long ar) throws ZarvaKivetel{
+		if (nyitva) {
+			BoltBejegyzes jegyzes = new BoltBejegyzes(e, mennyiseg, ar);
+			aruk.put(e.getVonalKod(), jegyzes);
 		}
 		else {
-			throw new NemLetezoAruKivetel("Nincs áru ezzel a vonalkóddal: " + vonalKod);
+			throw new ZarvaKivetel("A bolt zárva.");
 		}
 	}
 	
-	public void vasarolElelmiszer(long vonalKod,long mennyiseg)  throws NemLetezoAruKivetel,TulSokLevonasKivetel{
-		
-		if (elelmiszerPult.containsKey(vonalKod)) {
-			BoltBejegyzes aru = elelmiszerPult.get(vonalKod);
-			if (!(aru.getMennyiseg() < mennyiseg)) {
-				aru.levonMennyiseg(mennyiseg);
+	public void torolElelmiszer(long vonalKod) throws NemLetezoAruKivetel, ZarvaKivetel{
+		if (nyitva) {
+			if (aruk.containsKey(vonalKod)) {
+				aruk.remove(vonalKod);
 			}
 			else {
-				throw new TulSokLevonasKivetel("Nincs ennyi áru készleten: " + mennyiseg);
+				throw new NemLetezoAruKivetel("Nincs áru ezzel a vonalkóddal: " + vonalKod);
 			}
 		}
 		else {
-			throw new NemLetezoAruKivetel("Nincs áru ezzel a vonalkóddal: " + vonalKod);
+			throw new ZarvaKivetel("A bolt zárva.");
+		}
+	}
+	
+	public void vasarolElelmiszer(long vonalKod,long mennyiseg)  throws NemLetezoAruKivetel,TulSokLevonasKivetel, ZarvaKivetel{
+		if (nyitva) {
+			if (aruk.containsKey(vonalKod)) {
+				BoltBejegyzes aru = aruk.get(vonalKod);
+				if (!(aru.getMennyiseg() < mennyiseg)) {
+					aru.levonMennyiseg(mennyiseg);
+				}
+				else {
+					throw new TulSokLevonasKivetel("Nincs ennyi áru készleten: " + mennyiseg);
+				}
+			}
+			else {
+				throw new NemLetezoAruKivetel("Nincs áru ezzel a vonalkóddal: " + vonalKod);
+			}
+		}
+		else {
+			throw new ZarvaKivetel("A bolt zárva.");
 		}
 	}
 	
@@ -166,12 +194,52 @@ public class Bolt {
 		}
 
 		public Aru next() {
-			return i.next();
+			Aru a = (Aru)i.next();
+			return new Aru( a.getVonalKod(), a.getGyarto()){};
 		}
 		
 		public void remove() {
 			i.remove();
 		}
 		
+	}
+
+	public Iterator<Aru> aruk() throws ZarvaKivetel {
+		if (nyitva) {
+			ArrayList<Aru> aruList = new ArrayList<Aru>();
+			for (BoltBejegyzes jegyzes : aruk.values()) {
+				aruList.add(jegyzes.getE());
+			}
+			return aruList.iterator();
+		}
+		else{
+			throw new ZarvaKivetel("A bolt zárva.");
+		}
+	}
+
+	public void vasarol(Aru a, long mennyiseg) throws ZarvaKivetel {
+		if (nyitva) {
+			try {
+				vasarolElelmiszer(a.getVonalKod(), mennyiseg);
+			} catch (BoltKivetel e) {
+				e.printStackTrace();
+			}
+		}
+		else {
+			throw new ZarvaKivetel("A bolt zárva.");
+		}
+	}
+
+	public void nyit() {
+		nyitva = true;
+	}
+
+	public void zar() {
+		nyitva = false;
+	}
+
+	public File getLog() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
