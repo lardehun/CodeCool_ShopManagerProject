@@ -10,6 +10,8 @@ import bolt.kivetel.BoltKivetel;
 import bolt.kivetel.NemLetezoAruKivetel;
 import bolt.kivetel.TulSokLevonasKivetel;
 import bolt.kivetel.ZarvaKivetel;
+import log.BoltLogger;
+import log.Logger;
 
 public class Bolt implements Shop{
 	private String nev;
@@ -17,6 +19,7 @@ public class Bolt implements Shop{
 	private String tulajdonos;
 	private Hashtable<Long, BoltBejegyzes> aruk = new Hashtable<Long, Bolt.BoltBejegyzes>();
 	private boolean nyitva =true;
+	BoltLogger logger;
 	
 	public Bolt(String nev, String cim, String tulajdonos, Hashtable<Long, BoltBejegyzes> elelmiszerPult) {
 		this.nev = nev;
@@ -72,6 +75,7 @@ public class Bolt implements Shop{
 	
 	public void feltoltElelmiszerrel(long vonalKod,long mennyiseg) throws NemLetezoAruKivetel, ZarvaKivetel{
 		if (nyitva) {
+			logger.addAruFeltoltes("feltoltMeglevoElelmiszer-- " + "Vonalkod: " + vonalKod + " Mennyiseg" + mennyiseg);
 			if (aruk.containsKey(vonalKod)) {
 				BoltBejegyzes jegyzes = aruk.get(vonalKod);
 				jegyzes.adMennyiseg(mennyiseg);
@@ -86,11 +90,13 @@ public class Bolt implements Shop{
 	}
 	
 	public Hashtable<Long, BoltBejegyzes> getElelmiszerPult() {
+		logger.addAruListaLekerdezese("Arulista lekerdezes.");
 		return aruk;
 	}
 
 	public void feltoltUjElelmiszerrel(Elelmiszer e, long mennyiseg,long ar) throws ZarvaKivetel{
 		if (nyitva) {
+			logger.addAruFeltoltes("feltoltUjElelmiszer-- " + "Vonalkod: " + e.getVonalKod() + " Mennyiseg: " + mennyiseg + " Ar: "+ar);
 			BoltBejegyzes jegyzes = new BoltBejegyzes(e, mennyiseg, ar);
 			aruk.put(e.getVonalKod(), jegyzes);
 		}
@@ -101,6 +107,7 @@ public class Bolt implements Shop{
 	
 	public void torolElelmiszer(long vonalKod) throws NemLetezoAruKivetel, ZarvaKivetel{
 		if (nyitva) {
+			logger.addAruTorles("torolElelmiszer-- " + "Vonalkod: " + vonalKod);
 			if (aruk.containsKey(vonalKod)) {
 				aruk.remove(vonalKod);
 			}
@@ -115,6 +122,7 @@ public class Bolt implements Shop{
 	
 	public void vasarolElelmiszer(long vonalKod,long mennyiseg)  throws NemLetezoAruKivetel,TulSokLevonasKivetel, ZarvaKivetel{
 		if (nyitva) {
+			logger.addVasarlas("vasarolElelmiszer-- " + "Vonalkod: " + vonalKod + " Mennyiseg" + mennyiseg);
 			if (aruk.containsKey(vonalKod)) {
 				BoltBejegyzes aru = aruk.get(vonalKod);
 				if (!(aru.getMennyiseg() < mennyiseg)) {
@@ -219,6 +227,7 @@ public class Bolt implements Shop{
 
 	public void vasarol(Aru a, long mennyiseg) throws ZarvaKivetel {
 		if (nyitva) {
+			logger.addVasarlas("vasarolAru-- " + "Vonalkod: " + a.getVonalKod() + " Mennyiseg" + mennyiseg);
 			try {
 				vasarolElelmiszer(a.getVonalKod(), mennyiseg);
 			} catch (BoltKivetel e) {
@@ -232,14 +241,15 @@ public class Bolt implements Shop{
 
 	public void nyit() {
 		nyitva = true;
+		logger = new BoltLogger(new File("C:\\logging.txt"));
 	}
 
 	public void zar() {
 		nyitva = false;
+		logger.closeLogging();
 	}
 
-	public File getLog() {
-		// TODO Auto-generated method stub
-		return null;
+	public BoltLogger getLog() {
+		return logger;
 	}
 }

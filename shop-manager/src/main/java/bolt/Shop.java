@@ -1,9 +1,9 @@
 package bolt;
 
-import java.io.File;
 import java.util.Iterator;
 
 import bolt.kivetel.ZarvaKivetel;
+import log.BoltLogger;
 
 public interface Shop {
 	public Iterator<Aru> aruk() throws ZarvaKivetel;
@@ -13,5 +13,5 @@ public interface Shop {
 	public String getTulajdonos();
 	public void nyit();
 	public void zar();
-	public File getLog();
+	public BoltLogger getLog();
 }
